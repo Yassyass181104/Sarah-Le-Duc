@@ -2,9 +2,10 @@
 
 | Student's name | SCIPER |
 | -------------- | ------ |
-| | |
-| | |
-| | |
+|Yassine Alaoui | 358113 |
+|Amine Louah |343896 |
+|Sarah Lim | |
+|Ilian Changkakoti | |
 
 [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
