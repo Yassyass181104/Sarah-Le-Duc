@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Movie Rating Analysis — Sarah Le Duc</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- D3 v7 -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <!-- d3-hexbin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-hexbin/0.2.2/d3-hexbin.min.js"></script>
+</head>
+<body>
+
+  <!-- ── HEADER ───────────────────────────────────────────── -->
+  <header>
+    <div class="header-inner">
+      <h1>Movie Rating Analysis</h1>
+      <p class="subtitle">IMDb · Metascore · Netflix &nbsp;|&nbsp; COM-480 Data Visualization · Group Sarah Le Duc</p>
+    </div>
+  </header>
+
+  <!-- ── NAV TABS ─────────────────────────────────────────── -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="dumbbell">Audience vs Critics</button>
+    <button class="tab-btn" data-tab="barchart">Genre Evolution</button>
+    <button class="tab-btn" data-tab="hexbin">Density Map</button>
+  </nav>
+
+  <!-- ── CONTENT PANELS ───────────────────────────────────── -->
+  <main>
+
+    <!-- OVERVIEW -->
+    <section id="tab-overview" class="tab-panel active">
+      <div class="intro-grid">
+        <div class="intro-card">
+          <h2>Project Goal</h2>
+          <p>
+            We explore how movie ratings reflect quality, popularity, and platform context —
+            and where rating systems <em>disagree</em>. Using the <strong>IMDb Top 1000</strong>
+            and the <strong>Netflix catalog</strong> we build three complementary views that
+            let you dig into audience-vs-critic gaps, shifting genre trends, and the
+            relationship between popularity and quality.
+          </p>
+        </div>
+        <div class="intro-card">
+          <h2>The Questions</h2>
+          <ul>
+            <li>Where do audience scores (IMDb) and critic scores (Metascore) diverge most?</li>
+            <li>How has genre popularity shifted from the 1920s to today?</li>
+            <li>Do highly-rated films attract more votes, or is quality independent of popularity?</li>
+            <li>How does Netflix content compare to IMDb's curated top tier?</li>
+          </ul>
+        </div>
+        <div class="intro-card">
+          <h2>Datasets</h2>
+          <table class="stat-table">
+            <thead><tr><th>Dataset</th><th>Size</th><th>Score mean</th><th>Score SD</th></tr></thead>
+            <tbody>
+              <tr><td>IMDb Top 1000</td><td>~1 000</td><td>7.95</td><td>0.28</td></tr>
+              <tr><td>Netflix catalog</td><td>~5 000</td><td>6.53</td><td>1.16</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Cross-dataset comparisons use only the ~400–500 matched titles to avoid distribution bias.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- V1 — DUMBBELL -->
+    <section id="tab-dumbbell" class="tab-panel">
+      <div class="viz-header">
+        <div>
+          <h2>Audience vs Critics</h2>
+          <p>Each bar connects a movie's IMDb user score (left dot) to its normalized Metascore (right dot).
+             Sorted by the absolute gap — the most divisive films appear at the top.</p>
+        </div>
+        <div class="controls">
+          <label>Genre
+            <select id="db-genre-select"><option value="all">All genres</option></select>
+          </label>
+          <label>Show top
+            <select id="db-top-select">
+              <option value="30">30</option>
+              <option value="50" selected>50</option>
+              <option value="80">80</option>
+            </select>
+          </label>
+          <label>Sort by
+            <select id="db-sort-select">
+              <option value="gap_desc">Largest gap ↓</option>
+              <option value="gap_asc">Smallest gap ↑</option>
+              <option value="imdb_desc">IMDb score ↓</option>
+              <option value="meta_desc">Metascore ↓</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div id="dumbbell-legend" class="legend-row">
+        <span class="dot imdb-dot"></span><span>IMDb score (audience)</span>
+        <span class="dot meta-dot"></span><span>Metascore ÷ 10 (critics)</span>
+        <span class="dot gap-dot"></span><span>Gap &gt; 1.5 pts</span>
+      </div>
+      <div id="dumbbell-container"></div>
+    </section>
+
+    <!-- V2 — BAR CHART RACE -->
+    <section id="tab-barchart" class="tab-panel">
+      <div class="viz-header">
+        <div>
+          <h2>Genre Evolution Over Decades</h2>
+          <p>Watch how genre counts (or average ratings) have shifted from the 1920s to 2020s.
+             Use the slider or hit Play to animate.</p>
+        </div>
+        <div class="controls">
+          <label>Metric
+            <select id="bc-metric-select">
+              <option value="count">Movie count</option>
+              <option value="avg_rating">Avg IMDb rating</option>
+            </select>
+          </label>
+          <label>Dataset
+            <select id="bc-dataset-select">
+              <option value="imdb">IMDb Top 1000</option>
+              <option value="netflix">Netflix</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="race-controls">
+        <button id="bc-play-btn" class="play-btn">&#9654; Play</button>
+        <input type="range" id="bc-decade-slider" min="1920" max="2020" step="10" value="1920" />
+        <span id="bc-decade-label" class="decade-label">1920s</span>
+      </div>
+      <div id="barchart-container"></div>
+    </section>
+
+    <!-- V3 — HEXBIN -->
+    <section id="tab-hexbin" class="tab-panel">
+      <div class="viz-header">
+        <div>
+          <h2>Popularity vs Quality — Density Map</h2>
+          <p>Hexagonal bins colored by density show where movies cluster on the
+             rating × vote-count plane. Outliers in the upper-right are crowd favorites;
+             top-left gems are high-quality but underexposed.</p>
+        </div>
+        <div class="controls">
+          <label>Dataset
+            <select id="hx-dataset-select">
+              <option value="imdb">IMDb Top 1000</option>
+              <option value="netflix">Netflix</option>
+            </select>
+          </label>
+          <label>Decade
+            <select id="hx-decade-select"><option value="all">All decades</option></select>
+          </label>
+          <label>Genre
+            <select id="hx-genre-select"><option value="all">All genres</option></select>
+          </label>
+        </div>
+      </div>
+      <div id="hexbin-container"></div>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ───────────────────────────────────────────── -->
+  <footer>
+    <p>COM-480 Data Visualization · EPFL 2025 · Group Sarah Le Duc ·
+       <a href="https://github.com/com-480-data-visualization/project-2025-sarah_le_duc" target="_blank">GitHub</a>
+    </p>
+  </footer>
+
+  <!-- ── SCRIPTS ──────────────────────────────────────────── -->
+  <script src="js/main.js"></script>
+  <script src="js/dumbbell.js"></script>
+  <script src="js/barchart_race.js"></script>
+  <script src="js/hexbin.js"></script>
+</body>
+</html>

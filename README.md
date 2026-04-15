@@ -116,6 +116,29 @@ prioritize clear comparisons over raw statistics, and also videos that were rank
 
 **10% of the final grade**
 
+### Running the website locally
+
+The site uses `d3.csv()` to load data files, so it must be served over HTTP — opening `index.html` directly in a browser will not work.
+
+**Option A — Python (no installation required)**
+
+```bash
+# From the project root (Sarah-Le-Duc/)
+python -m http.server 8080
+```
+
+Then open [http://localhost:8080/website/](http://localhost:8080/website/) in your browser.
+
+**Option B — Node `http-server`**
+
+```bash
+npm install -g http-server   # one-time install
+http-server . -p 8080
+```
+
+Then open [http://localhost:8080/website/](http://localhost:8080/website/).
+
+> **Important:** always run the server from the **project root** (`Sarah-Le-Duc/`), not from inside `website/`. The visualizations load CSV files from `resources/` which sits one level above `website/`.
 
 ## Milestone 3 (29th May, 5pm)
 
