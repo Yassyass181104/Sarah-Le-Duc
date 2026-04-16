@@ -7,6 +7,8 @@
 |Sarah Lim | 341929 |
 |Ilian Changkakoti | 340815 |
 
+Website link: [https://sarah-le-duc.netlify.app/website/](https://sarah-le-duc.netlify.app/website/)
+
 [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
 ## Milestone 1 (20th March, 5pm)
@@ -115,6 +117,8 @@ prioritize clear comparisons over raw statistics, and also videos that were rank
 ## Milestone 2 (17th April, 5pm)
 
 **10% of the final grade**
+
+Live Website link: [https://sarah-le-duc.netlify.app/website/](https://sarah-le-duc.netlify.app/website/)
 
 ### Running the website locally
 
