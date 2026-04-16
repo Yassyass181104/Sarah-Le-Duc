@@ -40,8 +40,8 @@ window.hideTooltip = () => tooltip.classList.remove('visible');
 
 // ── Data paths (relative to website/ folder) ─────────────
 const DATA = {
-  imdb:    '../resources/imdb_top_1000_cleaned.csv',
-  netflix: '../resources/netflix_cleaned.csv',
+  imdb:    './resources/imdb_top_1000_cleaned.csv',
+  netflix: './resources/netflix_cleaned.csv',
 };
 
 // ── Shared data cache ────────────────────────────────────
